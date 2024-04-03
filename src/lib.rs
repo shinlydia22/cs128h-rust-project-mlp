@@ -38,9 +38,31 @@ impl Matrix {
     // addition
     pub fn add(&self, other: Matrix) -> Result<Matrix, MatrixError> {
         // check if height and width are the same
-        if other.num_cols == self.num_cols && other.num_rows == self.num_rows {
+        if other.num_cols != self.num_cols && other.num_rows != self.num_rows {
             let error = MatrixError::new(MatrixErrorKind::InvalidDimensions);
             return Err(error);
         }
+        let mut sum_matrix: Matrix = Matrix::new(self.num_rows, self.num_cols);
+        for row in 0.. self.num_rows {
+            for col in 0.. self.num_cols {
+                sum_matrix.matrix[row][col] = self.matrix[row][col] + other.matrix[row][col];
+            }
+        }
+        return Ok(sum_matrix);
+    }
+
+    //subtraction
+    pub fn subtract(&self, other: Matrix) -> Result<Matrix, MatrixError> {
+        if other.num_cols != self.num_cols && other.num_rows != self.num_rows {
+            let error = MatrixError::new(MatrixErrorKind::InvalidDimensions);
+            return Err(error);
+        }
+        let mut sub_matrix: Matrix = Matrix::new(self.num_rows, self.num_cols);
+        for row in 0.. self.num_rows {
+            for col in 0.. self.num_cols {
+                sub_matrix.matrix[row][col] = self.matrix[row][col] - other.matrix[row][col];
+            }
+        }
+        return Ok(sub_matrix);
     }
 }
