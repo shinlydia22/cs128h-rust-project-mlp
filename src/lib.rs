@@ -65,4 +65,50 @@ impl Matrix {
         }
         return Ok(sub_matrix);
     }
+
+    pub fn row_vec_at(&self, row: usize) -> Result<Vec<f64>, MatrixError>{
+        if row >= self.num_rows {
+            //Look at this later once we add another error type
+        }
+        let mut row_vec: Vec<f64> = Vec::new();
+        for i in 0.. self.num_cols {
+            row_vec.push(self.matrix[row][i]);
+        }
+        return Ok(row_vec);
+    }
+
+    pub fn col_vec_at(&self, col: usize) -> Result<Vec<f64>, MatrixError> {
+        if col >= self.num_cols {
+            //Add new error here later
+        }
+        let mut col_vec: Vec<f64> = Vec::new();
+        for i in 0.. self.num_rows {
+            col_vec.push(self.matrix[i][col]);
+        }
+        return Ok(col_vec);
+    }
+
+    //multiplication
+    pub fn multiply(&self, other: Matrix) -> Result<Matrix, MatrixError> {
+        if(self.num_cols != other.num_rows) {
+            let error = MatrixError::new(MatrixErrorKind::InvalidDimensions);
+            return Err(error);
+        }
+        let mut mult_matrix: Matrix = Matrix::new(self.num_rows, other.num_cols);
+        // Save this part for further discussion --> Do we want a dot product function? Multithreading? etc. 
+    }
+
+    
 }
+
+pub fn dot_product(vec1: Vec<f64>, vec2: Vec<f64>) -> Result<f64, MatrixError> {
+    if vec1.len() != vec2.len() {
+        let error = MatrixError::new(MatrixErrorKind::InvalidDimensions);
+        return Err(error);
+    }
+    let mut dot_product: f64 = 0.0;
+    for i in 0.. vec1.len() {
+        dot_product += vec1[i] * vec2[1];
+    }
+    return Ok(dot_product);
+ }
