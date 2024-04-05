@@ -95,10 +95,24 @@ impl Matrix {
             return Err(error);
         }
         let mut mult_matrix: Matrix = Matrix::new(self.num_rows, other.num_cols);
-        // Save this part for further discussion --> Do we want a dot product function? Multithreading? etc. 
+        for i in 0.. self.num_rows {
+            for j in 0.. other.num_cols {
+                mult_matrix.matrix[i][j] = dot_product(self.row_vec_at(i), other.col_vec_at(j));
+            }
+        }
+        return Ok(mult_matrix);
     }
 
-    
+    //determinant
+    pub fn get_determinant(&self) -> Result<f64, MatrixError> {
+        if self.num_rows != self.num_cols {
+            let error = MatrixError::new(MatrixErrorKind::InvalidDimensions);
+            return Err(error);
+        }
+        if self.num_rows == 1 {return self.matrix[0][0];}
+    }
+
+
 }
 
 pub fn dot_product(vec1: Vec<f64>, vec2: Vec<f64>) -> Result<f64, MatrixError> {

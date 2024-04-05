@@ -16,7 +16,7 @@ pub enum MatrixErrorKind {
 
 /// MatrixError impl block
 impl MatrixError {
-    /// Instantiates a new HangmanError object with the given error_type attached
+    /// Instantiates a new MatrixError object with the given error_type attached
     /// to the given user_input.
     pub fn new(error_type: MatrixErrorKind) -> MatrixError {
         let error_msg = match error_type {
