@@ -1,4 +1,7 @@
-use crate::src::error::{MatrixError, MatrixErrorKind};
+// use matrix_error::{MatrixError, MatrixErrorKind};
+
+mod matrix_error;
+use matrix_error::{MatrixError, MatrixErrorKind};
 
 // matrix struct
 #[derive(Debug, Clone)]
@@ -97,7 +100,7 @@ impl Matrix {
         let mut mult_matrix: Matrix = Matrix::new(self.num_rows, other.num_cols);
         for i in 0.. self.num_rows {
             for j in 0.. other.num_cols {
-                mult_matrix.matrix[i][j] = dot_product(self.row_vec_at(i), other.col_vec_at(j));
+                mult_matrix.matrix[i][j] = dot_product(self.row_vec_at(i).unwrap(), other.col_vec_at(j).unwrap())?;
             }
         }
         return Ok(mult_matrix);
@@ -113,13 +116,13 @@ impl Matrix {
 
         if self.num_rows == 1 {return Ok(self.matrix[0][0]);}
 
-        let mat = self.matrix;
+        let mat = &self.matrix;
         // if 2x2
         if self.num_rows == 2 {
             return Ok((mat[0][0] * mat[1][1]) - (mat[0][1] * mat[1][0]));
         }
         // if bigger than 2x2... cofactor expansion !?!? (across row 1)
-        let det: f64 = 0.0;
+        let mut det: f64 = 0.0;
         for i in 0..self.num_rows {
             det += mat[i][1] * self.get_cofactor(i, 1);
         }
@@ -130,11 +133,17 @@ impl Matrix {
     fn get_cofactor(&self, row: usize, col: usize) -> f64 {
         // we don't need to do the Result thing bc this not a pub function right
         let minor: Matrix = self.get_minor(row, col);
-        let cofactor: f32 = minor.get_determinant();
+        let mut cofactor: f64 = 0.0;
+        if minor.get_determinant().is_ok() {
+            cofactor = minor.get_determinant().unwrap();
+        } else {
+            // throw some kind of error here !?!?
+            // we prob can't even get here tho...
+        }
         if (row + col) % 2 == 0 {
             return cofactor;
         } else {
-            return cofactor * -1;
+            return cofactor * -1.0;
         }
     }
 
@@ -142,10 +151,10 @@ impl Matrix {
     fn get_minor(&self, row: usize, col: usize) -> Matrix {
         // we don't need to do the Result thing bc this not a pub function right
         // make new matrix w dimensions one smaller than self
-        let minor = Matrix::new(self.num_rows - 1, self.num_cols - 1);
+        let mut minor = Matrix::new(self.num_rows - 1, self.num_cols - 1);
         // iterate thru and copy the stuff over for all places EXCEPT...
-        let minor_row: usize = 0;
-        let minor_col: usize = 0;
+        let mut minor_row: usize = 0;
+        let mut minor_col: usize = 0;
         for r in 0..self.num_rows {
             if r != row { // for every row except the one we're excluding
                 for c in 0..self.num_cols {
