@@ -90,7 +90,7 @@ impl Matrix {
 
     //multiplication
     pub fn multiply(&self, other: Matrix) -> Result<Matrix, MatrixError> {
-        if(self.num_cols != other.num_rows) {
+        if self.num_cols != other.num_rows {
             let error = MatrixError::new(MatrixErrorKind::InvalidDimensions);
             return Err(error);
         }
@@ -105,11 +105,59 @@ impl Matrix {
 
     //determinant
     pub fn get_determinant(&self) -> Result<f64, MatrixError> {
+        // check if square
         if self.num_rows != self.num_cols {
             let error = MatrixError::new(MatrixErrorKind::InvalidDimensions);
             return Err(error);
         }
-        if self.num_rows == 1 {return self.matrix[0][0];}
+
+        if self.num_rows == 1 {return Ok(self.matrix[0][0]);}
+
+        let mat = self.matrix;
+        // if 2x2
+        if self.num_rows == 2 {
+            return Ok((mat[0][0] * mat[1][1]) - (mat[0][1] * mat[1][0]));
+        }
+        // if bigger than 2x2... cofactor expansion !?!? (across row 1)
+        let det: f64 = 0.0;
+        for i in 0..self.num_rows {
+            det += mat[i][1] * self.get_cofactor(i, 1);
+        }
+        Ok(det)
+    }
+    
+    // cofactor of a matrix (self) given index of row and column (helper for get_determinant)
+    fn get_cofactor(&self, row: usize, col: usize) -> f64 {
+        // we don't need to do the Result thing bc this not a pub function right
+        let minor: Matrix = self.get_minor(row, col);
+        let cofactor: f32 = minor.get_determinant();
+        if (row + col) % 2 == 0 {
+            return cofactor;
+        } else {
+            return cofactor * -1;
+        }
+    }
+
+    // minor (helper for get_cofactor)
+    fn get_minor(&self, row: usize, col: usize) -> Matrix {
+        // we don't need to do the Result thing bc this not a pub function right
+        // make new matrix w dimensions one smaller than self
+        let minor = Matrix::new(self.num_rows - 1, self.num_cols - 1);
+        // iterate thru and copy the stuff over for all places EXCEPT...
+        let minor_row: usize = 0;
+        let minor_col: usize = 0;
+        for r in 0..self.num_rows {
+            if r != row { // for every row except the one we're excluding
+                for c in 0..self.num_cols {
+                    if c != col { // for every col except the one we're excluding
+                        minor.matrix[minor_row][minor_col] = self.matrix[r][c];
+                        minor_row += 1;
+                        minor_col += 1;
+                    }
+                }
+            }
+        }
+        minor
     }
 
 
@@ -125,4 +173,5 @@ pub fn dot_product(vec1: Vec<f64>, vec2: Vec<f64>) -> Result<f64, MatrixError> {
         dot_product += vec1[i] * vec2[1];
     }
     return Ok(dot_product);
- }
+}
+
