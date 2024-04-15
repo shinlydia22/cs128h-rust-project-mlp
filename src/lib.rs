@@ -169,6 +169,15 @@ impl Matrix {
         minor
     }
 
+    // returns the element in the matrix at given row and col idx
+    pub fn at(&self, row: usize, col: usize) -> f64 {
+        self.matrix[row][col]
+    }
+
+    // inserts the given f64 into the matrix at given row and col idx
+    pub fn insert(&mut self, value: f64, row: usize, col: usize) {
+        self.matrix[row][col] = value;
+    }
 
 }
 
