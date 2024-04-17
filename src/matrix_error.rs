@@ -2,6 +2,7 @@ use std::fmt;
 
 /// Error message for an unrecognized command
 const INVALID_DIMENSIONS : &str = "Dimensions do not match.";
+const OUT_OF_BOUNDS: &str = "Accessed row/column is out of bounds";
 
 /// Custom struct for error handling.
 #[derive(Debug)]
@@ -13,7 +14,8 @@ pub struct MatrixError {
 /// Enum to describe the different possible types of errors.
 #[derive(Debug, PartialEq)]
 pub enum MatrixErrorKind {
-    InvalidDimensions
+    InvalidDimensions,
+    OutOfBounds
 }
 
 /// MatrixError impl block
@@ -22,7 +24,8 @@ impl MatrixError {
     /// to the given user_input.
     pub fn new(error_type: MatrixErrorKind) -> MatrixError {
         let error_msg = match error_type {
-            MatrixErrorKind::InvalidDimensions => INVALID_DIMENSIONS.to_string()
+            MatrixErrorKind::InvalidDimensions => INVALID_DIMENSIONS.to_string(),
+            MatrixErrorKind::OutOfBounds => OUT_OF_BOUNDS.to_string()
         };
         MatrixError {
             error_type,

@@ -169,6 +169,15 @@ impl Matrix {
         minor
     }
 
+    pub fn echelon_form(&self) -> Matrix {
+        let mut ech: Matrix = self.clone();
+        let diagonals: i32 =  self.num_rows.min(self.num_cols) as i32;
+
+
+
+        return ech;
+    }
+
     // returns the element in the matrix at given row and col idx
     pub fn at(&self, row: usize, col: usize) -> f64 {
         self.matrix[row][col]
@@ -177,6 +186,40 @@ impl Matrix {
     // inserts the given f64 into the matrix at given row and col idx
     pub fn insert(&mut self, value: f64, row: usize, col: usize) {
         self.matrix[row][col] = value;
+    }
+
+    //For dividing input 1/scaling factor
+    pub fn scale_row(&mut self, row_idx: usize, factor: f64) -> Result<(), MatrixError> {
+        if row_idx >= self.num_rows {
+            let error = MatrixError::new(MatrixErrorKind::OutOfBounds);
+            return Err(error);
+        }
+        for i in 0.. self.num_cols {
+            self.matrix[row_idx][i] *= factor;
+        }
+        return Ok(());
+    }
+
+    pub fn row_add(&mut self, row_taken: usize, row_operated: usize, scale: f64) -> Result<(), MatrixError>{
+        if row_taken >= self.num_rows || row_operated >= self.num_rows {
+            let error = MatrixError::new(MatrixErrorKind::OutOfBounds);
+            return Err(error);
+        }
+        for i in 0.. self.num_cols {
+            self.matrix[row_operated][i] += scale * self.matrix[row_taken][i];
+        }
+        return Ok(());
+    }
+
+    pub fn row_sub(&mut self, row_taken: usize, row_operated: usize, scale: f64) -> Result<(), MatrixError>{
+        if row_taken >= self.num_rows || row_operated >= self.num_rows {
+            let error = MatrixError::new(MatrixErrorKind::OutOfBounds);
+            return Err(error);
+        }
+        for i in 0.. self.num_cols {
+            self.matrix[row_operated][i] -= scale * self.matrix[row_taken][i];
+        }
+        return Ok(());
     }
 
 }
