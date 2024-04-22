@@ -2,6 +2,7 @@
 
 mod matrix_error;
 use matrix_error::{MatrixError, MatrixErrorKind};
+use std::mem;
 
 // matrix struct
 #[derive(Debug, Clone)]
@@ -172,7 +173,7 @@ impl Matrix {
     pub fn echelon_form(&self) -> Matrix {
         let mut ech: Matrix = self.clone();
         let diagonals: i32 =  self.num_rows.min(self.num_cols) as i32;
-
+        
 
 
         return ech;
@@ -200,6 +201,7 @@ impl Matrix {
         return Ok(());
     }
 
+    //For adding a row by a scale of another row
     pub fn row_add(&mut self, row_taken: usize, row_operated: usize, scale: f64) -> Result<(), MatrixError>{
         if row_taken >= self.num_rows || row_operated >= self.num_rows {
             let error = MatrixError::new(MatrixErrorKind::OutOfBounds);
@@ -211,6 +213,7 @@ impl Matrix {
         return Ok(());
     }
 
+    //Subtracting a row by a scale of another row
     pub fn row_sub(&mut self, row_taken: usize, row_operated: usize, scale: f64) -> Result<(), MatrixError>{
         if row_taken >= self.num_rows || row_operated >= self.num_rows {
             let error = MatrixError::new(MatrixErrorKind::OutOfBounds);
@@ -219,6 +222,20 @@ impl Matrix {
         for i in 0.. self.num_cols {
             self.matrix[row_operated][i] -= scale * self.matrix[row_taken][i];
         }
+        return Ok(());
+    }
+
+    pub fn row_swap(&mut self, row1: usize, row2: usize) -> Result<(), MatrixError> {
+        if row1 >= self.num_rows || row2 >= self.num_rows {
+            let error = MatrixError::new(MatrixErrorKind::OutOfBounds);
+            return Err(error);
+        }
+        let v1: Vec<f64> = self.matrix[row1].clone();
+        for i in 0.. self.num_cols {
+            self.matrix[row1][i] = self.matrix[row2][i];
+            self.matrix[row2][i] = v1[i];
+        }
+
         return Ok(());
     }
 
@@ -234,5 +251,27 @@ pub fn dot_product(vec1: Vec<f64>, vec2: Vec<f64>) -> Result<f64, MatrixError> {
         dot_product += vec1[i] * vec2[1];
     }
     return Ok(dot_product);
+}
+
+pub fn identity_matrix(dim: usize) -> Matrix {
+    let id = Matrix::new(dim, dim);
+    return id;
+}
+
+pub fn concat_matrices(m1: Matrix, m2: Matrix) -> Result<Matrix, MatrixError> {
+    if(m1.num_rows != m2.num_rows) {
+        let error = MatrixError::new(MatrixErrorKind::InvalidDimensions);
+        return Err(error);
+    }
+    let mut concat: Matrix = Matrix::new(m1.num_rows, m1.num_cols + m2.num_cols);
+    for i in 0.. concat.num_rows {
+        for j in 0.. m1.num_cols {
+            concat.matrix[i][j] = m1.at(i, j);
+        }
+        for j in 0.. m2.num_cols {
+            concat.matrix[i][m1.num_cols + j] = m2.at(i, j);
+        }
+    }
+    return Ok(concat);
 }
 
