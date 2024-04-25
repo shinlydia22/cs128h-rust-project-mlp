@@ -50,6 +50,7 @@ mod tests {
         assert_eq!(true_det, result.expect("REASON"));
     }
 
+    #[test]
     fn test_minor_4x4() {
         let mut mat: Matrix = Matrix::new(4,4);
         let row1 = vec![1.0, 2.0, 3.0, -2.0];
