@@ -29,6 +29,23 @@ impl Matrix {
         }
     }
 
+    // replaces the specified row with the given vector
+    pub fn insert_row(&mut self, row: usize, vec: Vec<f64>) -> Result<bool, MatrixError> {
+        // check if vec is correct length
+        if vec.len() != self.num_cols {
+            let error = MatrixError::new(MatrixErrorKind::InvalidDimensions);
+            return Err(error);
+        }
+        // check if row is valid
+        if row >= self.num_rows {
+            let error = MatrixError::new(MatrixErrorKind::OutOfBounds);
+            return Err(error);
+        }
+        // replace the current vector at row with vec
+        self.matrix[row] = vec.clone();
+        Ok(true)
+    }
+
     // print matrix
     pub fn print_matrix(&self) {
         println!("{} x {} matrix:", self.num_rows, self.num_cols);
@@ -119,7 +136,8 @@ impl Matrix {
     }
 
     // minor (helper for get_cofactor)
-    fn get_minor(&self, row: usize, col: usize) -> Matrix {
+    pub fn get_minor(&self, row: usize, col: usize) -> Matrix {
+        println!("get_minor: row = {}, col = {}", row, col);
         // we don't need to do the Result thing bc this not a pub function right
         // make new matrix w dimensions one smaller than self
         let mut minor = Matrix::new(self.num_rows - 1, self.num_cols - 1);
@@ -127,16 +145,23 @@ impl Matrix {
         let mut minor_row: usize = 0;
         let mut minor_col: usize = 0;
         for r in 0..self.num_rows {
-            if r != row { // for every row except the one we're excluding
-                for c in 0..self.num_cols {
-                    if c != col { // for every col except the one we're excluding
+            minor_col = 0;
+            for c in 0..self.num_cols {
+                println!("r = {}, c = {}", r, c);
+                println!("minor_row = {}, minor_col = {}", minor_row, minor_col);
+                if r != row {
+                    if c != col {
+                        println!("adding {} at {}, {}", self.matrix[r][c], minor_row, minor_col);
                         minor.matrix[minor_row][minor_col] = self.matrix[r][c];
-                        minor_row += 1;
                         minor_col += 1;
                     }
                 }
             }
+            if r != row {
+                minor_row += 1;
+            }
         }
+        minor.print_matrix();
         minor
     }
 
