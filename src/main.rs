@@ -31,15 +31,15 @@ fn main () {
 
     // println!("{}", pam == bob);
 
-    // let mut mat = Matrix::new(3, 3);
-    // let row1 = vec![2.0, 4.0, 1.0]; 
-    // let row2 = vec![6.0, 15.0, 6.0];
-    // let row3 = vec![0.0, 3.0, 7.0];
-    // let _ = mat.insert_row(0, row1);
-    // let _ = mat.insert_row(1, row2);
-    // let _ = mat.insert_row(2, row3);
-    // let ech = mat.echelon_form();
-    // ech.print_matrix();
+    let mut mat = Matrix::new(3, 3);
+    let row1 = vec![2.0, 4.0, 1.0]; 
+    let row2 = vec![6.0, 15.0, 6.0];
+    let row3 = vec![0.0, 3.0, 7.0];
+    let _ = mat.insert_row(0, row1);
+    let _ = mat.insert_row(1, row2);
+    let _ = mat.insert_row(2, row3);
+    let ech = mat.rref();
+    ech.print_matrix();
 }
 
 #[cfg(test)]

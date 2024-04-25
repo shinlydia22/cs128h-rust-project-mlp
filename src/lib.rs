@@ -207,7 +207,64 @@ impl Matrix {
 
             //Operating downwards
             for j in (i + 1).. ech.num_rows {
-                ech.row_sub(i, j, ech.at(j, pivot));
+                    ech.row_sub(i, j, ech.at(j, pivot));
+                
+                if p_vec[j] == pivot {p_vec[j] += 1;}
+            }
+            //Now that this is done, increase the pivot position by 1
+            pivot += 1;
+        }
+
+        ech
+    }
+
+    pub fn rref(&self) -> Matrix {
+        let mut ech: Matrix = self.clone();
+        let mut pivot: usize = 0;
+        let mut p_vec: Vec<usize> = Vec::new();
+        for i in 0.. ech.num_rows {
+            let temp = ech.find_pivot(i);
+            p_vec.push(temp.unwrap());
+        }
+        //println!("Vec: {:?}", p_vec);
+
+        /* Check if there is a nonzero value in the xth column of the leading row, if not, 
+        look for a row with a nonzero value.
+        If no such row is found, then skip the column and proceed with the next one until
+        there are no more rows. */
+        let mut matching: bool = false; 
+        for i in 0.. self.num_rows {
+            //println!("Pivot: {}", pivot);
+            if pivot >= self.num_cols {break;}
+            //making sure there's a pivot that matches
+            if p_vec[i] != pivot {
+                matching = false;
+                for j in i.. p_vec.len() {
+                    if p_vec[j] == pivot {
+                        ech.row_swap(i, j);
+                        let temp = p_vec[i];
+                        p_vec[i] = p_vec[j];
+                        p_vec[j] = temp;
+                        matching = true;
+                    }
+                }
+
+                if !matching {
+                    pivot += 1;
+                    continue;
+                }
+            }
+
+            let scale = ech.at(i, pivot);
+            ech.scale_row(i, 1.0 / scale); // <- scales the row such that the pivot value is 1
+            //println!("Scale: {}", 1.0/scale);
+
+            //Operating downwards
+            for j in 0.. ech.num_rows {
+                if j == i {continue;}
+                println!("Pivot {} at row {}: {}", pivot, j, ech.at(j, pivot));
+                    ech.row_sub(i, j, ech.at(j, pivot));
+                
                 if p_vec[j] == pivot {p_vec[j] += 1;}
             }
             //Now that this is done, increase the pivot position by 1
