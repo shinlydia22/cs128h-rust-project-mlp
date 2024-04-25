@@ -31,8 +31,8 @@ impl Matrix {
     // print matrix
     pub fn print_matrix(&self) {
         println!("{} x {} matrix:", self.num_rows, self.num_cols);
-        for col in 0..self.num_rows {
-            for row in 0..self.num_cols {
+        for row in 0..self.num_rows {
+            for col in 0..self.num_cols {
                 print!("{} ", self.matrix[row][col]);
             }
             println!();
@@ -254,7 +254,10 @@ pub fn dot_product(vec1: Vec<f64>, vec2: Vec<f64>) -> Result<f64, MatrixError> {
 }
 
 pub fn identity_matrix(dim: usize) -> Matrix {
-    let id = Matrix::new(dim, dim);
+    let mut id = Matrix::new(dim, dim);
+    for i in 0..dim {
+        id.insert(1.0, i, i);
+    }
     return id;
 }
 
@@ -275,3 +278,21 @@ pub fn concat_matrices(m1: Matrix, m2: Matrix) -> Result<Matrix, MatrixError> {
     return Ok(concat);
 }
 
+
+// implement equality for Matrix
+impl PartialEq for Matrix {
+    fn eq(&self, other: &Self) -> bool {
+        // check dimensions
+        if self.num_cols != other.num_cols || self.num_rows != other.num_rows {
+            return false;
+        }
+        // check values
+        // iterate thru each row and see if they are equal
+        for row in 0..self.num_cols {
+            if self.matrix[row] != other.matrix[row] {
+                return false;
+            }
+        }
+        true
+    }
+}
