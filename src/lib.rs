@@ -3,6 +3,7 @@
 mod matrix_error;
 use matrix_error::{MatrixError, MatrixErrorKind};
 use std::mem;
+use std::ops::{Add, Sub};
 
 // matrix struct
 #[derive(Debug, Clone)]
@@ -37,37 +38,6 @@ impl Matrix {
             }
             println!();
         }
-    }
-
-    // addition
-    pub fn add(&self, other: Matrix) -> Result<Matrix, MatrixError> {
-        // check if height and width are the same
-        if other.num_cols != self.num_cols && other.num_rows != self.num_rows {
-            let error = MatrixError::new(MatrixErrorKind::InvalidDimensions);
-            return Err(error);
-        }
-        let mut sum_matrix: Matrix = Matrix::new(self.num_rows, self.num_cols);
-        for row in 0.. self.num_rows {
-            for col in 0.. self.num_cols {
-                sum_matrix.matrix[row][col] = self.matrix[row][col] + other.matrix[row][col];
-            }
-        }
-        return Ok(sum_matrix);
-    }
-
-    //subtraction
-    pub fn subtract(&self, other: Matrix) -> Result<Matrix, MatrixError> {
-        if other.num_cols != self.num_cols && other.num_rows != self.num_rows {
-            let error = MatrixError::new(MatrixErrorKind::InvalidDimensions);
-            return Err(error);
-        }
-        let mut sub_matrix: Matrix = Matrix::new(self.num_rows, self.num_cols);
-        for row in 0.. self.num_rows {
-            for col in 0.. self.num_cols {
-                sub_matrix.matrix[row][col] = self.matrix[row][col] - other.matrix[row][col];
-            }
-        }
-        return Ok(sub_matrix);
     }
 
     pub fn row_vec_at(&self, row: usize) -> Result<Vec<f64>, MatrixError>{
@@ -262,7 +232,7 @@ pub fn identity_matrix(dim: usize) -> Matrix {
 }
 
 pub fn concat_matrices(m1: Matrix, m2: Matrix) -> Result<Matrix, MatrixError> {
-    if(m1.num_rows != m2.num_rows) {
+    if m1.num_rows != m2.num_rows {
         let error = MatrixError::new(MatrixErrorKind::InvalidDimensions);
         return Err(error);
     }
@@ -288,11 +258,46 @@ impl PartialEq for Matrix {
         }
         // check values
         // iterate thru each row and see if they are equal
-        for row in 0..self.num_cols {
+        for row in 0..self.num_rows {
             if self.matrix[row] != other.matrix[row] {
                 return false;
             }
         }
         true
+    }
+}
+
+impl Add for Matrix {
+    type Output = Result<Matrix, MatrixError>;
+    fn add(self, other: Self) -> Result<Matrix, MatrixError> {
+        // check if height and width are the same
+        if other.num_cols != self.num_cols && other.num_rows != self.num_rows {
+            let error = MatrixError::new(MatrixErrorKind::InvalidDimensions);
+            return Err(error);
+        }
+        let mut sum_matrix: Matrix = Matrix::new(self.num_rows, self.num_cols);
+        for row in 0.. self.num_rows {
+            for col in 0.. self.num_cols {
+                sum_matrix.matrix[row][col] = self.matrix[row][col] + other.matrix[row][col];
+            }
+        }
+        return Ok(sum_matrix);
+    }
+}
+
+impl Sub for Matrix {
+    type Output = Result<Matrix, MatrixError>;
+    fn sub(self, other: Self) -> Result<Matrix, MatrixError> {
+        if other.num_cols != self.num_cols && other.num_rows != self.num_rows {
+            let error = MatrixError::new(MatrixErrorKind::InvalidDimensions);
+            return Err(error);
+        }
+        let mut sub_matrix: Matrix = Matrix::new(self.num_rows, self.num_cols);
+        for row in 0.. self.num_rows {
+            for col in 0.. self.num_cols {
+                sub_matrix.matrix[row][col] = self.matrix[row][col] - other.matrix[row][col];
+            }
+        }
+        return Ok(sub_matrix);
     }
 }
