@@ -172,9 +172,20 @@ impl Matrix {
 
     pub fn echelon_form(&self) -> Matrix {
         let mut ech: Matrix = self.clone();
-        let diagonals: i32 =  self.num_rows.min(self.num_cols) as i32;
-        
+        let mut pivot: usize = 0;
+        let mut p_vec: Vec<usize> = Vec::new();
+        for i in 0.. ech.num_rows {
+            let temp = ech.find_pivot(i);
+            if temp.is_ok() {p_vec[i] = temp.unwrap();}
+        }
 
+        /* Check if there is a nonzero value in the xth column of the leading row, if not, 
+        look for a row with a nonzero value.
+        If no such row is found, then skip the column and proceed with the next one until
+        there are no more rows. */
+        while pivot < self.num_cols && pivot < self.num_rows {
+
+        }
 
         return ech;
     }
@@ -237,6 +248,28 @@ impl Matrix {
         }
 
         return Ok(());
+    }
+
+    pub fn find_pivot(&self, row: usize) -> Result<usize, MatrixError> {
+        if row >= self.num_rows {
+            let error = MatrixError::new(MatrixErrorKind::OutOfBounds);
+            return Err(error);
+        }
+
+        for i in 0.. self.num_cols {
+            if self.at(row, i) != 0.0 {return Ok(i);}
+        }
+        return Ok(0); // <-- This doesn't amtter
+    }
+
+    pub fn get_tranverse(&self) -> Matrix {
+        let mut t: Matrix = Matrix::new(self.num_cols, self.num_rows);
+        for i in 0.. self.num_rows {
+            for j in 0.. self.num_cols {
+                t.insert(self.at(i, j), j, i);
+            }
+        }
+        t
     }
 
 }
