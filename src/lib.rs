@@ -184,7 +184,7 @@ impl Matrix {
         If no such row is found, then skip the column and proceed with the next one until
         there are no more rows. */
         while pivot < self.num_cols && pivot < self.num_rows {
-
+            
         }
 
         return ech;
