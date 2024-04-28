@@ -274,6 +274,27 @@ impl Matrix {
         ech
     }
 
+    pub fn get_inverse(&self) -> Result<Matrix, MatrixError> {
+        if self.get_determinant().is_err() || self.get_determinant().unwrap() == 0.0 {
+            let error = MatrixError::new(MatrixErrorKind::Uninvertible);
+            return Err(error);
+        }
+        let det = self.get_determinant().unwrap();
+        let mut cof = Matrix::new(self.num_rows, self.num_cols);
+        for i in 0.. self.num_rows {
+            for j in 0.. self.num_cols {
+                cof.insert(self.get_cofactor(i, j), i, j);
+            }
+        }
+        let mut inv = cof.get_transverse();
+        for i in 0.. inv.num_rows {
+            for j in 0.. inv.num_cols {
+                inv.matrix[i][j] /= det;
+            }
+        }
+        return Ok(inv);
+    }
+
     // returns the element in the matrix at given row and col idx
     pub fn at(&self, row: usize, col: usize) -> f64 {
         self.matrix[row][col]
@@ -346,7 +367,7 @@ impl Matrix {
         return Ok(self.num_cols); // <-- This doesn't amtter
     }
 
-    pub fn get_tranverse(&self) -> Matrix {
+    pub fn get_transverse(&self) -> Matrix {
         let mut t: Matrix = Matrix::new(self.num_cols, self.num_rows);
         for i in 0.. self.num_rows {
             for j in 0.. self.num_cols {
