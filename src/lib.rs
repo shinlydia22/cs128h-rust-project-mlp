@@ -1,4 +1,3 @@
-// use matrix_error::{MatrixError, MatrixErrorKind};
 
 mod matrix_error;
 use matrix_error::{MatrixError, MatrixErrorKind};
@@ -187,7 +186,7 @@ impl Matrix {
                 matching = false;
                 for j in i.. p_vec.len() {
                     if p_vec[j] == pivot {
-                        ech.row_swap(i, j);
+                        let _ = ech.row_swap(i, j);
                         let temp = p_vec[i];
                         p_vec[i] = p_vec[j];
                         p_vec[j] = temp;
@@ -202,12 +201,12 @@ impl Matrix {
             }
 
             let scale = ech.at(i, pivot);
-            ech.scale_row(i, 1.0 / scale); // <- scales the row such that the pivot value is 1
+            let _ = ech.scale_row(i, 1.0 / scale); // <- scales the row such that the pivot value is 1
             //println!("Scale: {}", 1.0/scale);
 
             //Operating downwards
             for j in (i + 1).. ech.num_rows {
-                    ech.row_sub(i, j, ech.at(j, pivot));
+                let _ = ech.row_sub(i, j, ech.at(j, pivot));
                 
                 if p_vec[j] == pivot {p_vec[j] += 1;}
             }
@@ -241,7 +240,7 @@ impl Matrix {
                 matching = false;
                 for j in i.. p_vec.len() {
                     if p_vec[j] == pivot {
-                        ech.row_swap(i, j);
+                        let _ = ech.row_swap(i, j);
                         let temp = p_vec[i];
                         p_vec[i] = p_vec[j];
                         p_vec[j] = temp;
@@ -256,14 +255,14 @@ impl Matrix {
             }
 
             let scale = ech.at(i, pivot);
-            ech.scale_row(i, 1.0 / scale); // <- scales the row such that the pivot value is 1
+            let _ = ech.scale_row(i, 1.0 / scale); // <- scales the row such that the pivot value is 1
             //println!("Scale: {}", 1.0/scale);
 
             //Operating downwards
             for j in 0.. ech.num_rows {
                 if j == i {continue;}
                 println!("Pivot {} at row {}: {}", pivot, j, ech.at(j, pivot));
-                    ech.row_sub(i, j, ech.at(j, pivot));
+                let _ = ech.row_sub(i, j, ech.at(j, pivot));
                 
                 if p_vec[j] == pivot {p_vec[j] += 1;}
             }
