@@ -4,6 +4,7 @@ use std::fmt;
 const INVALID_DIMENSIONS : &str = "Dimensions do not match.";
 const OUT_OF_BOUNDS: &str = "Accessed row/column is out of bounds";
 const UNINVERTIBLE: &str = "Matrix can't be inverted";
+const INVALID_DIMENSIONS_INPUT : &str = "User input did not follow correct format";
 
 /// Custom struct for error handling.
 #[derive(Debug)]
@@ -17,7 +18,8 @@ pub struct MatrixError {
 pub enum MatrixErrorKind {
     InvalidDimensions,
     OutOfBounds,
-    Uninvertible
+    Uninvertible,
+    InvalidDimensionsInput
 }
 
 /// MatrixError impl block
@@ -28,7 +30,8 @@ impl MatrixError {
         let error_msg = match error_type {
             MatrixErrorKind::InvalidDimensions => INVALID_DIMENSIONS.to_string(),
             MatrixErrorKind::OutOfBounds => OUT_OF_BOUNDS.to_string(),
-            MatrixErrorKind::Uninvertible => UNINVERTIBLE.to_string()
+            MatrixErrorKind::Uninvertible => UNINVERTIBLE.to_string(),
+            MatrixErrorKind::InvalidDimensionsInput => INVALID_DIMENSIONS_INPUT.to_string()
         };
         MatrixError {
             error_type,
