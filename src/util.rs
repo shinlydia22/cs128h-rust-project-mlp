@@ -5,7 +5,7 @@ use mlp::Matrix;
 use crate::matrix_error::{MatrixError, MatrixErrorKind};
 
 // asks user for input and returns a tuple of usizes of height and width
-pub fn input_dimensions() -> Result<(usize, usize),MatrixError> {
+fn input_dimensions() -> Result<(usize, usize),MatrixError> {
     let mut input = String::new();
     // prompt user and read in string
     print!("input dimensions of the matrix: ([height] [width]) ");
@@ -27,7 +27,7 @@ pub fn input_dimensions() -> Result<(usize, usize),MatrixError> {
 }
 
 // takes in dimensiosn and then prompts the user to fill in the matrix one row at a time
-pub fn fill_matrix(num_rows: usize, num_cols: usize) -> Result<Matrix, MatrixError> {
+fn fill_matrix(num_rows: usize, num_cols: usize) -> Result<Matrix, MatrixError> {
     // initialize empty matrix
     let mut mat: Matrix = Matrix::new(num_rows, num_cols);
     println!("Now we are going to fill in the matrix row by row!");
@@ -42,8 +42,7 @@ pub fn fill_matrix(num_rows: usize, num_cols: usize) -> Result<Matrix, MatrixErr
 
 // prompts user to input a row given num_cols (length of row)
 fn input_row(num_cols: usize) -> Result<Vec<f64>, MatrixError> {
-    // hi
-    println!("input row: (with {} values) ", num_cols);
+    print!("input row ({} values): ", num_cols);
     io::stdout().flush().expect("failed to flush stdout");
     let mut input = String::new();
     io::stdin().read_line(&mut input).expect("failed to read row values");
@@ -63,4 +62,17 @@ fn input_row(num_cols: usize) -> Result<Vec<f64>, MatrixError> {
         v_f64.push(val);
     }
     Ok(v_f64)
+}
+
+pub fn input_matrix() -> Result<Matrix, MatrixError> {
+    // get dimensions of the matrix
+    let dimensions = input_dimensions().unwrap();
+    let num_rows = dimensions.0;
+    let num_cols = dimensions.1;
+    // println!("ur dimensions are {} and {}", num_rows, num_cols);
+
+    // create the matrix and fill it in
+    let mut mat: Matrix = fill_matrix(num_rows, num_cols).expect("REASON");
+    // jud.print_matrix();
+    Ok(mat)
 }

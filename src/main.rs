@@ -6,16 +6,6 @@ use util::*;
 
 fn main () {
 
-    // get dimensions of the matrix
-    let dimensions = input_dimensions().unwrap();
-    let num_rows = dimensions.0;
-    let num_cols = dimensions.1;
-    println!("ur dimensions are {} and {}", num_rows, num_cols);
-
-    // create the matrix and fill it in
-    let mut jud: Matrix = fill_matrix(num_rows, num_cols).expect("REASON");
-    jud.print_matrix();
-
     // more potential names for our future test matrices:
     // - jim
     // - joe
@@ -24,6 +14,9 @@ fn main () {
     // - eli
     // - jud
     // - him (like "I'm him" yknow)
+
+    let jud: Matrix = input_matrix().expect("reason ...");
+    jud.print_matrix();
 
     // let mut bob: Matrix = Matrix::new(2,4);
     // bob.insert(5.0,0,0);
