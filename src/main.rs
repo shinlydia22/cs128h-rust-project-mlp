@@ -1,6 +1,19 @@
 use mlp::Matrix;
+// use std::io;
+mod matrix_error;
+mod util; 
+use util::*;
 
 fn main () {
+
+    // get dimensions of the matrix
+    let dimensions = get_dimensions().unwrap();
+    let num_rows = dimensions.0;
+    let num_cols = dimensions.1;
+    println!("ur dimensions are {} and {}", num_rows, num_cols);
+
+    // 
+
     // more potential names for our future test matrices:
     // - jim
     // - joe
@@ -10,14 +23,11 @@ fn main () {
     // - jud
     // - him (like "I'm him" yknow)
 
-    // let mat: Matrix = Matrix::new(1, 1);
-    // mat.print_matrix();
-
-    let mut bob: Matrix = Matrix::new(2,4);
-    bob.insert(5.0,0,0);
-    let vec: Vec<f64> = vec![1.0, 2.0, 4.0, 1.0];
-    bob.insert_row(1, vec);
-    bob.print_matrix();
+    // let mut bob: Matrix = Matrix::new(2,4);
+    // bob.insert(5.0,0,0);
+    // let vec: Vec<f64> = vec![1.0, 2.0, 4.0, 1.0];
+    // let _ = bob.insert_row(1, vec);
+    // bob.print_matrix();
 
     // let mut jim: Matrix = Matrix::new(2,4);
     // jim.insert(5.0, 0, 0);
@@ -31,15 +41,15 @@ fn main () {
 
     // println!("{}", pam == bob);
 
-    let mut mat = Matrix::new(3, 3);
-    let row1 = vec![2.0, 4.0, 1.0]; 
-    let row2 = vec![6.0, 15.0, 6.0];
-    let row3 = vec![0.0, 3.0, 7.0];
-    let _ = mat.insert_row(0, row1);
-    let _ = mat.insert_row(1, row2);
-    let _ = mat.insert_row(2, row3);
-    let ech = mat.rref();
-    ech.print_matrix();
+    // let mut mat = Matrix::new(3, 3);
+    // let row1 = vec![2.0, 4.0, 1.0]; 
+    // let row2 = vec![6.0, 15.0, 6.0];
+    // let row3 = vec![0.0, 3.0, 7.0];
+    // let _ = mat.insert_row(0, row1);
+    // let _ = mat.insert_row(1, row2);
+    // let _ = mat.insert_row(2, row3);
+    // let ech = mat.rref();
+    // ech.print_matrix();
 }
 
 #[cfg(test)]
