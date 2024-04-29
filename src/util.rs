@@ -64,6 +64,7 @@ fn input_row(num_cols: usize) -> Result<Vec<f64>, MatrixError> {
     Ok(v_f64)
 }
 
+// create a matrix using user input
 pub fn input_matrix() -> Result<Matrix, MatrixError> {
     // get dimensions of the matrix
     let dimensions = input_dimensions().unwrap();
@@ -75,4 +76,35 @@ pub fn input_matrix() -> Result<Matrix, MatrixError> {
     let mut mat: Matrix = fill_matrix(num_rows, num_cols).expect("REASON");
     // jud.print_matrix();
     Ok(mat)
+}
+
+// ask the user what they want to do next and proceed accordingly
+pub fn input_action() {
+    // prompt user
+    print!("what would you like to do next? (enter \"help\" for options) ");
+    io::stdout().flush().expect("failed to flush stdout");
+    let mut input = String::new();
+    io::stdin().read_line(&mut input).expect("failed to read row values");
+    // convert to &str and trim
+    let binding = String::from(input);
+    let input_str = binding.trim();
+    match input_str {
+        "help" => print_options(),
+        _ => println!("input does not match any options"),
+    }
+    
+}
+
+// prints options for the user to know what they can do with their matrices
+fn print_options() {
+    println!("A: create new matrix
+              B: multiply two matrices
+              C: get determinant of matrix
+              D: get echelon form of matrix
+              E: get rref of matrix
+              F: get inverse of matrix
+              G: find dot product of two matrices
+              H: concatenate two matrices
+              I: add two matrices
+              J: subtract a matrix from another");
 }

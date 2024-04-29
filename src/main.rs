@@ -15,8 +15,10 @@ fn main () {
     // - jud
     // - him (like "I'm him" yknow)
 
-    let jud: Matrix = input_matrix().expect("reason ...");
-    jud.print_matrix();
+    // let jud: Matrix = input_matrix().expect("reason ...");
+    // jud.print_matrix();
+    input_action();
+
 
     // let mut bob: Matrix = Matrix::new(2,4);
     // bob.insert(5.0,0,0);
