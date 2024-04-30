@@ -80,6 +80,8 @@ impl MatrixUI {
 
     // create a matrix using user input
     pub fn input_matrix(&mut self) -> Result<Matrix, MatrixError> {
+        //get name of matrix
+        let name = self.input_label();
         // get dimensions of the matrix
         let dimensions = self.input_dimensions().unwrap();
         let num_rows = dimensions.0;
@@ -87,6 +89,7 @@ impl MatrixUI {
 
         // create the matrix and fill it in
         let mat: Matrix = self.fill_matrix(num_rows, num_cols).expect("REASON");
+        self.matrices.insert(name, mat.clone());
         Ok(mat)
     }
 
@@ -102,6 +105,16 @@ impl MatrixUI {
         let input_str = binding.trim();
         input_str.to_string()
         
+    }
+
+    pub fn input_label(&self) -> String {
+        print!("What would you like the matrix name to be?");
+        io::stdout().flush().expect("failed to flush stdout");
+        let mut label = String::new();
+        io::stdin().read_line(&mut label).expect("failed to read name");
+        let binding = String::from(label);
+        let name = binding.trim();
+        return name.to_string();
     }
 
     // prints options for the user to know what they can do with their matrices
@@ -128,6 +141,6 @@ impl MatrixUI {
         if action == "A" {
             println!("creating matrix");
             let _ = self.input_matrix();
-        }
+        } 
     }
 }
