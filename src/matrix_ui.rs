@@ -89,7 +89,7 @@ impl MatrixUI {
 
         // create the matrix and fill it in
         let mat: Matrix = self.fill_matrix(num_rows, num_cols).expect("REASON");
-        self.matrices.insert(name, mat.clone());
+        self.matrices.insert(name.clone(), mat.clone());
         Ok(mat)
     }
 
@@ -117,6 +117,77 @@ impl MatrixUI {
         return name.to_string();
     }
 
+    pub fn print_matrices(&self) {
+        for label in self.matrices.keys() {
+            println!("{}", label);
+        }
+    }
+
+    pub fn two_inputs(&self) -> Result<(Matrix, Matrix), MatrixError> {
+        print!("Please choose with a space in between: [matrix 1] [matrix 2]");
+        io::stdout().flush().expect("failed to flush stdout");
+        let mut input = String::new();
+        io::stdin().read_line(&mut input).expect("failed to read values");
+        let binding = String::from(input);
+        let input_str = binding.trim();
+        let v: Vec<&str> = input_str.split(' ').collect();
+        if v.len() != 2 {
+            let error = MatrixError::new(MatrixErrorKind::InvalidInput);
+            return Err(error);
+        }
+
+        if !self.matrices.contains_key(v[0]) || !self.matrices.contains_key(v[1]) {
+            let error = MatrixError::new(MatrixErrorKind::MatrixNotFound);
+            return Err(error);
+        }
+
+        return Ok((self.matrices.get(v[0]).unwrap().clone(), self.matrices.get(v[1]).unwrap().clone()));
+    }
+
+    pub fn store(&self) -> bool {
+        print!("Do you want to store the matrix?");
+        while true {
+            io::stdout().flush().expect("failed to flush stdout");
+            let mut input = String::new();
+            io::stdin().read_line(&mut input).expect("failed to read values");
+            let binding = String::from(input);
+            let input_str = binding.trim();
+            if input_str == "y" {
+                return true;
+            } else if input_str == "n" {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    pub fn store_matrix(&self, val: Matrix) {
+        let label = self.input_label();
+        self.matrices.insert(label, val);
+    }
+
+    pub fn mult_matrices(&self) -> Result<Matrix, MatrixError> {
+        let mats = self.two_inputs();
+        if mats.is_err() {
+            let test = mats.unwrap_err();
+            return Err(test);
+        }
+        let v = mats.unwrap();
+        let product = v.0.multiply(v.1);
+        if product.is_err() {
+            let error = product.unwrap_err();
+            return Err(error);
+        }
+        let mult_mat = product.unwrap();
+        let store = self.store();
+        if store {
+            self.store_matrix(mult_mat);
+        }
+        return Ok(mult_mat);
+    }
+
+
+
     // prints options for the user to know what they can do with their matrices
     fn print_options(&self) -> Result<bool, MatrixError> {
         println!("
@@ -129,7 +200,8 @@ impl MatrixUI {
                 G: find dot product of two matrices
                 H: concatenate two matrices
                 I: add two matrices
-                J: subtract a matrix from another");
+                J: subtract a matrix from another
+                print: print stored matrices");
         Ok(true)
     }
 
@@ -141,6 +213,19 @@ impl MatrixUI {
         if action == "A" {
             println!("creating matrix");
             let _ = self.input_matrix();
-        } 
+        } else if action == "B" {
+            println!("select two matrices to multiply: ");
+            self.print_matrices();
+            let auto = self.mult_matrices();
+            if auto.is_err() {
+                print!("{}", auto.unwrap_err().error_msg);
+            } else {
+                auto.unwrap().print_matrix();
+            }
+        }
+        if action == "print" {
+            println!("printing... {} matrices", self.matrices.len());
+            self.print_matrices();
+        }
     }
 }

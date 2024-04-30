@@ -6,6 +6,7 @@ const INVALID_DIMENSIONS : &str = "Dimensions do not match.";
 const OUT_OF_BOUNDS: &str = "Accessed row/column is out of bounds";
 const UNINVERTIBLE: &str = "Matrix can't be inverted";
 const INVALID_INPUT : &str = "User input did not follow correct format";
+const MATRIX_NOT_FOUND: &str = "Matrix could not be found";
 
 /// Custom struct for error handling.
 #[derive(Debug)]
@@ -20,7 +21,8 @@ pub enum MatrixErrorKind {
     InvalidDimensions,
     OutOfBounds,
     Uninvertible,
-    InvalidInput
+    InvalidInput,
+    MatrixNotFound
 }
 
 /// MatrixError impl block
@@ -32,7 +34,8 @@ impl MatrixError {
             MatrixErrorKind::InvalidDimensions => INVALID_DIMENSIONS.to_string(),
             MatrixErrorKind::OutOfBounds => OUT_OF_BOUNDS.to_string(),
             MatrixErrorKind::Uninvertible => UNINVERTIBLE.to_string(),
-            MatrixErrorKind::InvalidInput => INVALID_INPUT.to_string()
+            MatrixErrorKind::InvalidInput => INVALID_INPUT.to_string(),
+            MatrixErrorKind::MatrixNotFound => MATRIX_NOT_FOUND.to_string()
         };
         MatrixError {
             error_type,
