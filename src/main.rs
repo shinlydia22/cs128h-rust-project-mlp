@@ -1,8 +1,8 @@
-use mlp::Matrix;
-// use std::io;
+// use mlp::Matrix;
 mod matrix_error;
-mod util; 
-use util::*;
+mod matrix_ui; 
+// use util::*;
+use crate::matrix_ui::*;
 
 fn main () {
 
@@ -17,7 +17,14 @@ fn main () {
 
     // let jud: Matrix = input_matrix().expect("reason ...");
     // jud.print_matrix();
-    input_action();
+    let mut matrix_ui = MatrixUI::new();
+    loop {
+        let action = matrix_ui.input_action();
+        if action == "quit" {
+            break;
+        }
+        matrix_ui.do_action(action);
+    }
 
 
     // let mut bob: Matrix = Matrix::new(2,4);

@@ -16,7 +16,7 @@ impl Matrix {
     pub fn new(height: usize, width: usize) -> Self {
         // create 2d height by width vec populated w/ 0.0
         let mut matrix:Vec<Vec<f64>> = Vec::with_capacity(height);
-        for i in 0..height {
+        for _i in 0..height {
             let row = vec![0.0; width];
             matrix.push(row);
         }
@@ -141,7 +141,7 @@ impl Matrix {
         let mut minor = Matrix::new(self.num_rows - 1, self.num_cols - 1);
         // iterate thru and copy the stuff over for all places EXCEPT...
         let mut minor_row: usize = 0;
-        let mut minor_col: usize = 0;
+        let mut minor_col: usize;
         for r in 0..self.num_rows {
             minor_col = 0;
             for c in 0..self.num_cols {
@@ -177,7 +177,7 @@ impl Matrix {
         look for a row with a nonzero value.
         If no such row is found, then skip the column and proceed with the next one until
         there are no more rows. */
-        let mut matching: bool = false; 
+        let mut matching: bool; 
         for i in 0.. self.num_rows {
             //println!("Pivot: {}", pivot);
             if pivot >= self.num_cols {break;}
@@ -231,7 +231,7 @@ impl Matrix {
         look for a row with a nonzero value.
         If no such row is found, then skip the column and proceed with the next one until
         there are no more rows. */
-        let mut matching: bool = false; 
+        let mut matching: bool; 
         for i in 0.. self.num_rows {
             //println!("Pivot: {}", pivot);
             if pivot >= self.num_cols {break;}
