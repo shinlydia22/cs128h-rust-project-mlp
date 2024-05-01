@@ -1,6 +1,6 @@
 use std::io;
 use std::io::Write;
-use mlp::Matrix;
+use mlp::{concat_matrices, Matrix};
 use std::collections::HashMap;
 
 use crate::matrix_error::{MatrixError, MatrixErrorKind};
@@ -108,7 +108,7 @@ impl MatrixUI {
     }
 
     pub fn input_label(&self) -> String {
-        print!("What would you like the matrix name to be?");
+        print!("What would you like the matrix name to be? ");
         io::stdout().flush().expect("failed to flush stdout");
         let mut label = String::new();
         io::stdin().read_line(&mut label).expect("failed to read name");
@@ -144,6 +144,21 @@ impl MatrixUI {
         return Ok((self.matrices.get(v[0]).unwrap().clone(), self.matrices.get(v[1]).unwrap().clone()));
     }
 
+    pub fn one_input(&self) -> Result<Matrix, MatrixError> {
+        print!("Please type in the desired matrix: ");
+        io::stdout().flush().expect("failed to flush stdout");
+        let mut input = String::new();
+        io::stdin().read_line(&mut input).expect("failed to read value");
+        let binding = String::from(input);
+        let input_str = binding.trim();
+        if !self.matrices.contains_key(input_str) {
+            let error = MatrixError::new(MatrixErrorKind::MatrixNotFound);
+            return Err(error);
+        }
+
+        return Ok(self.matrices.get(input_str).unwrap().clone());
+    }
+
     pub fn store(&self) -> bool {
         print!("Do you want to store the matrix?");
         while true {
@@ -161,12 +176,12 @@ impl MatrixUI {
         return true;
     }
 
-    pub fn store_matrix(&self, val: Matrix) {
+    pub fn store_matrix(&mut self, val: Matrix) {
         let label = self.input_label();
         self.matrices.insert(label, val);
     }
 
-    pub fn mult_matrices(&self) -> Result<Matrix, MatrixError> {
+    pub fn mult_matrices(&mut self) -> Result<Matrix, MatrixError> {
         let mats = self.two_inputs();
         if mats.is_err() {
             let test = mats.unwrap_err();
@@ -176,18 +191,116 @@ impl MatrixUI {
         let product = v.0.multiply(v.1);
         if product.is_err() {
             let error = product.unwrap_err();
-            return Err(error);
+            return Err(MatrixError::new(MatrixErrorKind::InvalidDimensions));
         }
         let mult_mat = product.unwrap();
         let store = self.store();
         if store {
-            self.store_matrix(mult_mat);
+            self.store_matrix(mult_mat.clone());
         }
         return Ok(mult_mat);
     }
 
+    pub fn determinant(&mut self) -> Result<f64, MatrixError> {
+        let mat = self.one_input();
+        if mat.is_err() {
+            return Err(mat.unwrap_err());
+        }
+        let det = mat.unwrap().get_determinant();
+        if det.is_err() {
+            return Err(MatrixError::new(MatrixErrorKind::InvalidDimensions));
+        }
+        return Ok(det.unwrap());
+    }
 
+    pub fn get_echelon(&mut self) -> Result<Matrix, MatrixError> {
+        let mat = self.one_input();
+        if mat.is_err() {
+            return Err(mat.unwrap_err());
+        }
+        let ech = mat.unwrap().echelon_form();
+        let store = self.store();
+        if store {self.store_matrix(ech.clone());}
+        return Ok(ech);
+    }
 
+    pub fn get_rref(&mut self) -> Result<Matrix, MatrixError> {
+        let mat = self.one_input();
+        if mat.is_err() {
+            return Err(mat.unwrap_err());
+        }
+        let ech = mat.unwrap().rref();
+        let store = self.store();
+        if store {self.store_matrix(ech.clone());}
+        return Ok(ech);
+    }
+
+    pub fn inverse(&mut self) -> Result<Matrix, MatrixError> {
+        let mat = self.one_input();
+        if mat.is_err() {
+            return Err(mat.unwrap_err());
+        }
+        let inv = mat.unwrap().get_inverse();
+        if inv.is_err() {
+            return Err(MatrixError::new(MatrixErrorKind::Uninvertible));
+        }
+        let inv_mat = inv.unwrap();
+        let store = self.store();
+        if store {self.store_matrix(inv_mat.clone());}
+        return Ok(inv_mat);
+    }
+
+    pub fn get_concat(&mut self) -> Result<Matrix, MatrixError> {
+        let mats = self.two_inputs();
+        if mats.is_err() {
+            let test = mats.unwrap_err();
+            return Err(test);
+        }
+        let v = mats.unwrap();
+        let concat = concat_matrices(v.0, v.1);
+        if concat.is_err() {
+            return Err(MatrixError::new(MatrixErrorKind::InvalidDimensions));
+        }
+        let concat_mat = concat.unwrap();
+        let store = self.store();
+        if store {self.store_matrix(concat_mat.clone())}
+        return Ok(concat_mat);
+    }
+
+    pub fn get_sum(&mut self) -> Result<Matrix, MatrixError> {
+        let mats = self.two_inputs();
+        if mats.is_err() {
+            let test = mats.unwrap_err();
+            return Err(test);
+        }
+        let v = mats.unwrap();
+        let sum = v.0 + v.1;
+        if sum.is_err() {
+            return Err(MatrixError::new(MatrixErrorKind::InvalidDimensions));
+        }
+        let sum_mat = sum.unwrap();
+        let store = self.store();
+        if store {self.store_matrix(sum_mat.clone());}
+        return Ok(sum_mat);
+    }
+
+    pub fn get_diff(&mut self) -> Result<Matrix, MatrixError> {
+        let mats = self.two_inputs();
+        if mats.is_err() {
+            let test = mats.unwrap_err();
+            return Err(test);
+        }
+        let v = mats.unwrap();
+        let diff = v.0 - v.1;
+        if diff.is_err() {
+            return Err(MatrixError::new(MatrixErrorKind::InvalidDimensions));
+        }
+        let diff_mat = diff.unwrap();
+        let store = self.store();
+        if store {self.store_matrix(diff_mat.clone());}
+        return Ok(diff_mat);
+    }
+ 
     // prints options for the user to know what they can do with their matrices
     fn print_options(&self) -> Result<bool, MatrixError> {
         println!("
@@ -197,10 +310,9 @@ impl MatrixUI {
                 D: get echelon form of matrix
                 E: get rref of matrix
                 F: get inverse of matrix
-                G: find dot product of two matrices
-                H: concatenate two matrices
-                I: add two matrices
-                J: subtract a matrix from another
+                G: concatenate two matrices
+                H: add two matrices
+                I: subtract a matrix from another
                 print: print stored matrices");
         Ok(true)
     }
@@ -218,7 +330,70 @@ impl MatrixUI {
             self.print_matrices();
             let auto = self.mult_matrices();
             if auto.is_err() {
-                print!("{}", auto.unwrap_err().error_msg);
+                println!("{}", auto.unwrap_err().error_msg);
+            } else {
+                auto.unwrap().print_matrix();
+            }
+        } else if action == "C" {
+            println!("select matrix to get determinant of: ");
+            self.print_matrices();
+            let auto = self.determinant();
+            if auto.is_err() {
+                println!("{}", auto.unwrap_err().error_msg);
+            } else {
+                print!("{}", auto.unwrap());
+            }
+        } else if action == "D" {
+            println!("select matrix to get the echelon form of: ");
+            self.print_matrices();
+            let auto = self.get_echelon();
+            if auto.is_err() {
+                println!("{}", auto.unwrap_err().error_msg)
+            } else {
+                auto.unwrap().print_matrix();
+            }
+        } else if action == "E" {
+            println!("select matrix to get the rref of: ");
+            self.print_matrices();
+            let auto = self.get_rref();
+            if auto.is_err() {
+                println!("{}", auto.unwrap_err().error_msg)
+            } else {
+                auto.unwrap().print_matrix();
+            }
+        } else if action == "F" {
+            println!("select matrix to find the inverse of: ");
+            self.print_matrices();
+            let auto = self.inverse();
+            if auto.is_err() {
+                println!("{}", auto.unwrap_err().error_msg)
+            } else {
+                auto.unwrap().print_matrix();
+            }
+        } else if action == "G" {
+            println!("select two matrices to concatenate: ");
+            self.print_matrices();
+            let auto = self.get_concat();
+            if auto.is_err() {
+                println!("{}", auto.unwrap_err().error_msg)
+            } else {
+                auto.unwrap().print_matrix();
+            }
+        } else if action == "H" {
+            println!("select two matrices to add: ");
+            self.print_matrices();
+            let auto = self.get_sum();
+            if auto.is_err() {
+                println!("{}", auto.unwrap_err().error_msg)
+            } else {
+                auto.unwrap().print_matrix();
+            }
+        } else if action == "I" {
+            println!("select two matrices to subtract: ");
+            self.print_matrices();
+            let auto = self.get_diff();
+            if auto.is_err() {
+                println!("{}", auto.unwrap_err().error_msg)
             } else {
                 auto.unwrap().print_matrix();
             }

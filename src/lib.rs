@@ -385,7 +385,7 @@ pub fn dot_product(vec1: Vec<f64>, vec2: Vec<f64>) -> Result<f64, MatrixError> {
     }
     let mut dot_product: f64 = 0.0;
     for i in 0.. vec1.len() {
-        dot_product += vec1[i] * vec2[1];
+        dot_product += vec1[i] * vec2[i];
     }
     return Ok(dot_product);
 }
