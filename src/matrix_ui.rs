@@ -107,6 +107,7 @@ impl MatrixUI {
         
     }
 
+    //asks the user for a name for the matrix
     pub fn input_label(&self) -> String {
         print!("What would you like the matrix name to be? ");
         io::stdout().flush().expect("failed to flush stdout");
@@ -117,12 +118,16 @@ impl MatrixUI {
         return name.to_string();
     }
 
+    //iterates through matrices and prints out the key values,
+    //or in other words, the names inputted by the user
     pub fn print_matrices(&self) {
         for label in self.matrices.keys() {
             println!("{}", label);
         }
     }
 
+    //general helper function for retrieving two matrix names from the user
+    //returns a matrix error if one of the specified matrices doesn't exist
     pub fn two_inputs(&self) -> Result<(Matrix, Matrix), MatrixError> {
         print!("Please choose with a space in between: [matrix 1] [matrix 2]");
         io::stdout().flush().expect("failed to flush stdout");
@@ -144,6 +149,8 @@ impl MatrixUI {
         return Ok((self.matrices.get(v[0]).unwrap().clone(), self.matrices.get(v[1]).unwrap().clone()));
     }
 
+    //general helper function that retrieves a matrix from the user
+    //returns a MatrixError if the Matrix they ask for doesn't exist
     pub fn one_input(&self) -> Result<Matrix, MatrixError> {
         print!("Please type in the desired matrix: ");
         io::stdout().flush().expect("failed to flush stdout");
@@ -159,6 +166,7 @@ impl MatrixUI {
         return Ok(self.matrices.get(input_str).unwrap().clone());
     }
 
+    //Prompts the user if they want to store a created matrix
     pub fn store(&self) -> bool {
         print!("Do you want to store the matrix?");
         while true {
@@ -176,11 +184,13 @@ impl MatrixUI {
         return true;
     }
 
+    //Adds a given matrix to the stored list of matrices
     pub fn store_matrix(&mut self, val: Matrix) {
         let label = self.input_label();
         self.matrices.insert(label, val);
     }
 
+    //multiplies two matrices at the request of the user
     pub fn mult_matrices(&mut self) -> Result<Matrix, MatrixError> {
         let mats = self.two_inputs();
         if mats.is_err() {
@@ -201,6 +211,7 @@ impl MatrixUI {
         return Ok(mult_mat);
     }
 
+    //returns the determinant of a matrix requested by the user
     pub fn determinant(&mut self) -> Result<f64, MatrixError> {
         let mat = self.one_input();
         if mat.is_err() {
@@ -213,6 +224,7 @@ impl MatrixUI {
         return Ok(det.unwrap());
     }
 
+    //returns the echelon form of a matrix
     pub fn get_echelon(&mut self) -> Result<Matrix, MatrixError> {
         let mat = self.one_input();
         if mat.is_err() {
@@ -224,6 +236,7 @@ impl MatrixUI {
         return Ok(ech);
     }
 
+    //returns the rref of a matrix
     pub fn get_rref(&mut self) -> Result<Matrix, MatrixError> {
         let mat = self.one_input();
         if mat.is_err() {
@@ -235,6 +248,7 @@ impl MatrixUI {
         return Ok(ech);
     }
 
+    //returns the inverse of a matrix unless it is uninvertible
     pub fn inverse(&mut self) -> Result<Matrix, MatrixError> {
         let mat = self.one_input();
         if mat.is_err() {
@@ -250,6 +264,7 @@ impl MatrixUI {
         return Ok(inv_mat);
     }
 
+    //returns the concatenation of two matrices
     pub fn get_concat(&mut self) -> Result<Matrix, MatrixError> {
         let mats = self.two_inputs();
         if mats.is_err() {
@@ -267,6 +282,7 @@ impl MatrixUI {
         return Ok(concat_mat);
     }
 
+    //returns the sum of two matrices
     pub fn get_sum(&mut self) -> Result<Matrix, MatrixError> {
         let mats = self.two_inputs();
         if mats.is_err() {
@@ -284,6 +300,7 @@ impl MatrixUI {
         return Ok(sum_mat);
     }
 
+    //returns the difference of two matrices
     pub fn get_diff(&mut self) -> Result<Matrix, MatrixError> {
         let mats = self.two_inputs();
         if mats.is_err() {
@@ -318,6 +335,7 @@ impl MatrixUI {
     }
 
     // takes in String action and does what the action is :)
+    //A match block doesn't work since some of these options have different return types
     pub fn do_action(&mut self, action: String) {
         if action == "help" {
             let _ = self.print_options();
