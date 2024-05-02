@@ -168,7 +168,7 @@ impl MatrixUI {
 
     //Prompts the user if they want to store a created matrix
     pub fn store(&self) -> bool {
-        print!("Do you want to store the matrix?");
+        print!("Do you want to store the matrix (y/n)?");
         while true {
             io::stdout().flush().expect("failed to flush stdout");
             let mut input = String::new();
