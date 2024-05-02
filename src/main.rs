@@ -12,6 +12,8 @@ fn main () {
     // - pam
     // - rud
     // - eli
+    // - kan
+    // - kev
     // - jud
     // - him (like "I'm him" yknow)
 

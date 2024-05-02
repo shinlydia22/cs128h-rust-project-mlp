@@ -107,7 +107,7 @@ impl Matrix {
         if self.num_rows == 2 {
             return Ok((mat[0][0] * mat[1][1]) - (mat[0][1] * mat[1][0]));
         }
-        // if bigger than 2x2... cofactor expansion !?!? (across row 1)
+        // if bigger than 2x2... cofactor expansion (across row 1)
         let mut det: f64 = 0.0;
         for i in 0..self.num_rows {
             det += mat[i][1] * self.get_cofactor(i, 1);
@@ -122,9 +122,6 @@ impl Matrix {
         let mut cofactor: f64 = 0.0;
         if minor.get_determinant().is_ok() {
             cofactor = minor.get_determinant().unwrap();
-        } else {
-            // throw some kind of error here !?!?
-            // we prob can't even get here tho...
         }
         if (row + col) % 2 == 0 {
             return cofactor;
@@ -135,7 +132,6 @@ impl Matrix {
 
     // minor (helper for get_cofactor)
     pub fn get_minor(&self, row: usize, col: usize) -> Matrix {
-        println!("get_minor: row = {}, col = {}", row, col);
         // we don't need to do the Result thing bc this not a pub function right
         // make new matrix w dimensions one smaller than self
         let mut minor = Matrix::new(self.num_rows - 1, self.num_cols - 1);
@@ -145,11 +141,8 @@ impl Matrix {
         for r in 0..self.num_rows {
             minor_col = 0;
             for c in 0..self.num_cols {
-                println!("r = {}, c = {}", r, c);
-                println!("minor_row = {}, minor_col = {}", minor_row, minor_col);
                 if r != row {
                     if c != col {
-                        println!("adding {} at {}, {}", self.matrix[r][c], minor_row, minor_col);
                         minor.matrix[minor_row][minor_col] = self.matrix[r][c];
                         minor_col += 1;
                     }
@@ -159,7 +152,7 @@ impl Matrix {
                 minor_row += 1;
             }
         }
-        minor.print_matrix();
+        // minor.print_matrix();
         minor
     }
 
@@ -261,7 +254,7 @@ impl Matrix {
             //Operating downwards
             for j in 0.. ech.num_rows {
                 if j == i {continue;}
-                println!("Pivot {} at row {}: {}", pivot, j, ech.at(j, pivot));
+                //println!("Pivot {} at row {}: {}", pivot, j, ech.at(j, pivot));
                 let _ = ech.row_sub(i, j, ech.at(j, pivot));
                 
                 if p_vec[j] == pivot {p_vec[j] += 1;}

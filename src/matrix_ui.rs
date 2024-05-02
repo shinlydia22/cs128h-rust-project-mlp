@@ -359,7 +359,7 @@ impl MatrixUI {
             if auto.is_err() {
                 println!("{}", auto.unwrap_err().error_msg);
             } else {
-                print!("{}", auto.unwrap());
+                println!("{}", auto.unwrap());
             }
         } else if action == "D" {
             println!("select matrix to get the echelon form of: ");
